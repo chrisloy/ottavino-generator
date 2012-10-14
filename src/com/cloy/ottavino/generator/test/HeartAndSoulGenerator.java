@@ -1,12 +1,13 @@
 package com.cloy.ottavino.generator.test;
 
-import static com.cloy.ottavino.ChordShape.*;
-import static com.cloy.ottavino.Key.*;
-import static com.cloy.ottavino.DefaultInstrument.*;
+import static com.cloy.ottavino.ChordShape.Major;
+import static com.cloy.ottavino.ChordShape.Minor;
+import static com.cloy.ottavino.Key.A;
+import static com.cloy.ottavino.Key.C;
+import static com.cloy.ottavino.Key.F;
+import static com.cloy.ottavino.Key.G;
 
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Synthesizer;
 
 import com.cloy.ottavino.Chord;
 import com.cloy.ottavino.ChordBuilder;
@@ -14,6 +15,10 @@ import com.cloy.ottavino.Melody;
 import com.cloy.ottavino.generator.Generator;
 import com.cloy.ottavino.sequencer.Sequence;
 import com.cloy.ottavino.sequencer.Sequencer;
+import com.cloy.ottavino.sequencer.ToneSequence;
+import com.cloy.ottavino.sequencer.ToneSequencer;
+import com.cloy.ottavino.tone.SineTone;
+import com.cloy.ottavino.tone.ToneInstrument;
 import com.cloy.ottavino.util.ArrayUtil;
 
 public class HeartAndSoulGenerator implements Generator {
@@ -21,9 +26,9 @@ public class HeartAndSoulGenerator implements Generator {
 	@Override
 	public void play() throws MidiUnavailableException {
 		
-		Synthesizer synth = MidiSystem.getSynthesizer();
-		Sequencer s = new Sequencer(400, synth);
-		synth.open();
+		//Synthesizer synth = MidiSystem.getSynthesizer();
+		Sequencer<ToneInstrument> s = new ToneSequencer(400);
+		//synth.open();
 
 		ChordBuilder builder = new ChordBuilder();
 		
@@ -32,7 +37,7 @@ public class HeartAndSoulGenerator implements Generator {
 		Chord fMajor = builder.get(F, Major);
 		Chord gMajor = builder.get(G, Major);
 		
-		Sequence vibes = new Sequence(synth, 63, Vibraphone, 
+		Sequence vibes = new ToneSequence(63, new SineTone(), 
 				cMajor, null, null, null, null, null,
 				aMinor, null, null, null, null, null,
 				fMajor, null, null, null, null, null,
@@ -72,14 +77,14 @@ public class HeartAndSoulGenerator implements Generator {
 				67, 67, 67, null, null, null
 			));
 		
-		s.add(GrandPiano, bassMelody);
-		s.add(GrandPiano, rhythmMelody);
-		s.add(GrandPiano, leadMelody);
+		s.add(new SineTone(), bassMelody);
+		s.add(new SineTone(), rhythmMelody);
+		s.add(new SineTone(), leadMelody);
 		s.add(vibes);
 		
 		s.play(192); //twice through
 		
-		synth.close();
+		//synth.close();
 	}
 
 }

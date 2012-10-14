@@ -7,11 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Synthesizer;
 
-import com.cloy.ottavino.DefaultInstrument;
 import com.cloy.ottavino.Key;
 import com.cloy.ottavino.Melody;
 import com.cloy.ottavino.Octave;
@@ -19,6 +16,11 @@ import com.cloy.ottavino.Scale;
 import com.cloy.ottavino.generator.Generator;
 import com.cloy.ottavino.generator.melody.SimpleMelodyCreator;
 import com.cloy.ottavino.sequencer.Sequencer;
+import com.cloy.ottavino.sequencer.ToneSequencer;
+import com.cloy.ottavino.tone.SawTone;
+import com.cloy.ottavino.tone.SineTone;
+import com.cloy.ottavino.tone.SquareTone;
+import com.cloy.ottavino.tone.ToneInstrument;
 
 /**
  * Some nice seeds:
@@ -43,8 +45,8 @@ public class AnotherGenerator implements Generator {
 		
 		final Random random = new Random(seed);
 		
-		Synthesizer synth = MidiSystem.getSynthesizer();
-		synth.open();
+		//Synthesizer synth = MidiSystem.getSynthesizer();
+		//synth.open();
 		
 		int timeSig = 4;
 		
@@ -52,7 +54,8 @@ public class AnotherGenerator implements Generator {
 		int bpm = 50 + random.nextInt(400);
 		int totalBeats = timeSig * random.nextInt(64);
 		
-		Sequencer s = new Sequencer(bpm, synth);
+		//Sequencer<MidiInstrument> s = new MidiSequencer(bpm, synth);
+		Sequencer<ToneInstrument> s = new ToneSequencer(bpm);
 		
 		Key key = Key.getFromRootNote(random.nextInt(12) + 60);
 		Scale scale = random.nextBoolean() ? Scale.Major : Scale.Minor;
@@ -70,7 +73,12 @@ public class AnotherGenerator implements Generator {
 			
 			Melody melody = new SimpleMelodyCreator(key, Central, scale, startNote, 0.4, 0.4).createMelody(length);
 			double pan = 128d * new Double(i) / new Double(melodies);
-			s.add(DefaultInstrument.getInstrument(instrument), (int)pan, melody);
+			//s.add(MidiInstrument.getInstrument(instrument), (int)pan, melody);
+			switch(instrument % 3) {
+				case 0: s.add(new SineTone(), (int)pan, melody);
+				case 1: s.add(new SawTone(), (int)pan, melody);
+				case 2: s.add(new SquareTone(), (int)pan, melody);
+			}
 		}
 		
 		System.out.println();
@@ -89,7 +97,7 @@ public class AnotherGenerator implements Generator {
 		System.out.println();
 		System.out.println("Done");
 		
-		synth.close();
+		//synth.close();
 	}
 	
 	public static void main(String...args) {

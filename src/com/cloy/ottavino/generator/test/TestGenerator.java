@@ -1,16 +1,22 @@
 package com.cloy.ottavino.generator.test;
 
-import static com.cloy.ottavino.ChordShape.*;
-import static com.cloy.ottavino.Key.*;
-import static com.cloy.ottavino.DefaultInstrument.*;
+import static com.cloy.ottavino.ChordShape.Major;
+import static com.cloy.ottavino.ChordShape.Minor;
+import static com.cloy.ottavino.Key.A;
+import static com.cloy.ottavino.Key.C;
+import static com.cloy.ottavino.Key.F;
+import static com.cloy.ottavino.Key.G;
+import static com.cloy.ottavino.midi.MidiInstrument.GrandPiano;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
-import com.cloy.ottavino.ChordBuilder;
 import com.cloy.ottavino.Chord;
+import com.cloy.ottavino.ChordBuilder;
 import com.cloy.ottavino.generator.Generator;
+import com.cloy.ottavino.midi.MidiInstrument;
+import com.cloy.ottavino.sequencer.MidiSequencer;
 import com.cloy.ottavino.sequencer.Sequencer;
 
 public class TestGenerator implements Generator {
@@ -18,7 +24,7 @@ public class TestGenerator implements Generator {
 	public void play() throws MidiUnavailableException {
 		
 		Synthesizer synth = MidiSystem.getSynthesizer();
-		Sequencer s = new Sequencer(160, synth);
+		Sequencer<MidiInstrument> s = new MidiSequencer(160, synth);
 		synth.open();
 
 		ChordBuilder builder = new ChordBuilder();
